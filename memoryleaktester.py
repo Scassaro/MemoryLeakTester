@@ -84,6 +84,11 @@ def provisionAndDeleteBridges(tn):
     print("Bridges deleted. Deleting ONUs in progress...")
     tn.write(b"onu delete 2\r")
     time.sleep(1)
+    tn.write(b"yes\r")
+    time.sleep(1)
+    tn.write(b"no\r")
+    time.sleep(1)
+    tn.write(b"yes\r")
     tn.read_until(b"zSH>")
 
     print("All provisioning removed.")
@@ -106,6 +111,8 @@ def main():
     print("Memory after provisioning:\nCard 1 (Control): " + str(EndResult[0]) + " KB")
     print("Card 2 (Testing): " + str(EndResult[1]) + " KB")
 
+    print(str(FirstResult[1] - EndResult[1]) + " KB of memory difference between start and finish.") 
+    
     tn.write(b"exit\r")
     tn.close()
              
