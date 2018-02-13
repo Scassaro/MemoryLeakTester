@@ -18,9 +18,9 @@ import telnetlib
 def telnetToMXKAndLogin():
     
     host = "10.155.2.100"
-    #host = input("Enter the IP of your 219: ")
     tn = telnetlib.Telnet(host)
     tn.read_until(b"login:")
+    temp = "r"
     tn.write(b"admin\r")
     tn.read_until(b"password:")
     tn.write(b"zhone\r")
@@ -29,6 +29,9 @@ def telnetToMXKAndLogin():
 
 ########################################################
 # Determines type of MXK being queried.                #
+# Not currently used, and may not be necessary, but    #
+# could be important in later implementations on other #
+# platforms.                                           #
 ########################################################
 
 def determineMXKType(tn):
@@ -57,6 +60,18 @@ def runMemAnalysis(tn):
     OutArray = [OutArray[9] , OutArray[20]]
     return OutArray
 
+def yesNoYes(tn):
+    
+    time.sleep(1)
+    tn.write(b"yes\r")
+    time.sleep(1)
+    tn.write(b"no\r")
+    time.sleep(1)
+    tn.write(b"yes\r")
+    time.sleep(1)
+    tn.read_until(b"zSH>")
+    return
+
 ########################################################
 # Provision 1024 ONUs and 1 bridge per ONU.            #
 ########################################################
@@ -82,15 +97,53 @@ def provisionAndDeleteBridges(tn):
     tn.read_until(b"zSH>")
 
     print("Bridges deleted. Deleting ONUs in progress...")
-    tn.write(b"onu delete 2\r")
-    time.sleep(1)
-    tn.write(b"yes\r")
-    time.sleep(1)
-    tn.write(b"no\r")
-    time.sleep(1)
-    tn.write(b"yes\r")
-    tn.read_until(b"zSH>")
 
+    ############################################################
+
+    # Unusable until SLMSC-6362 fixed by Diana. 
+    
+    #tn.write(b"onu delete 2\r")
+    #yesNoYes(tn)
+
+    ############################################################
+
+    # Workaround until above ZOI is fixed.
+
+    tn.write(b"onu delete 2/1")
+    yesNoYes(tn)
+    tn.write(b"onu delete 2/2")
+    yesNoYes(tn)
+    tn.write(b"onu delete 2/3")
+    yesNoYes(tn)
+    tn.write(b"onu delete 2/4")
+    yesNoYes(tn)
+    tn.write(b"onu delete 2/5")
+    yesNoYes(tn)
+    tn.write(b"onu delete 2/6")
+    yesNoYes(tn)
+    tn.write(b"onu delete 2/7")
+    yesNoYes(tn)
+    tn.write(b"onu delete 2/8")
+    yesNoYes(tn)
+    tn.write(b"onu delete 2/9")
+    yesNoYes(tn)
+    tn.write(b"onu delete 2/10")
+    yesNoYes(tn)
+    tn.write(b"onu delete 2/11")
+    yesNoYes(tn)
+    tn.write(b"onu delete 2/12")
+    yesNoYes(tn)
+    tn.write(b"onu delete 2/13")
+    yesNoYes(tn)
+    tn.write(b"onu delete 2/14")
+    yesNoYes(tn)
+    tn.write(b"onu delete 2/15")
+    yesNoYes(tn)
+    tn.write(b"onu delete 2/16")
+    yesNoYes(tn)
+    
+    ############################################################
+    
     print("All provisioning removed.")
     return
 
@@ -111,8 +164,13 @@ def main():
     print("Memory after provisioning:\nCard 1 (Control): " + str(EndResult[0]) + " KB")
     print("Card 2 (Testing): " + str(EndResult[1]) + " KB")
 
-    print(str(FirstResult[1] - EndResult[1]) + " KB of memory difference between start and finish.") 
-    
+    if(FirstResult[1] > EndResult[1]):
+        print(str(FirstResult[1] - EndResult[1]) + " KB less memory available between start and finish.") 
+    elif(EndResult[1] > FirstResult[1]):
+        print(str(FirstResult[1] - EndResult[1]) + " KB more memory available between start and finish.")
+    else:
+        print("No memory difference between start and finish.") 
+        
     tn.write(b"exit\r")
     tn.close()
              
