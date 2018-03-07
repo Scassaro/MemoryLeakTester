@@ -97,52 +97,9 @@ def provisionAndDeleteBridges(tn):
     tn.read_until(b"zSH>")
 
     print("Bridges deleted. Deleting ONUs in progress...")
-
-    ############################################################
-
-    # Unusable until SLMSC-6362 fixed by Diana. 
     
-    #tn.write(b"onu delete 2\r")
-    #yesNoYes(tn)
-
-    ############################################################
-
-    # Workaround until above ZOI is fixed.
-
-    tn.write(b"onu delete 2/1")
+    tn.write(b"onu delete 2\r")
     yesNoYes(tn)
-    tn.write(b"onu delete 2/2")
-    yesNoYes(tn)
-    tn.write(b"onu delete 2/3")
-    yesNoYes(tn)
-    tn.write(b"onu delete 2/4")
-    yesNoYes(tn)
-    tn.write(b"onu delete 2/5")
-    yesNoYes(tn)
-    tn.write(b"onu delete 2/6")
-    yesNoYes(tn)
-    tn.write(b"onu delete 2/7")
-    yesNoYes(tn)
-    tn.write(b"onu delete 2/8")
-    yesNoYes(tn)
-    tn.write(b"onu delete 2/9")
-    yesNoYes(tn)
-    tn.write(b"onu delete 2/10")
-    yesNoYes(tn)
-    tn.write(b"onu delete 2/11")
-    yesNoYes(tn)
-    tn.write(b"onu delete 2/12")
-    yesNoYes(tn)
-    tn.write(b"onu delete 2/13")
-    yesNoYes(tn)
-    tn.write(b"onu delete 2/14")
-    yesNoYes(tn)
-    tn.write(b"onu delete 2/15")
-    yesNoYes(tn)
-    tn.write(b"onu delete 2/16")
-    yesNoYes(tn)
-    
-    ############################################################
     
     print("All provisioning removed.")
     return
